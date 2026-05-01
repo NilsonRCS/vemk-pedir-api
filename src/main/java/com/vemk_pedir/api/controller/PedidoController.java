@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/pedidos")
 public class PedidoController {
 
     private final PedidoService pedidoService;
@@ -27,19 +26,19 @@ public class PedidoController {
         this.pedidoService = pedidoService;
     }
 
-    @GetMapping
+    @GetMapping("/pedidos")
     public List<PedidoResponseDTO> listar() {
         return pedidoService.listarTodos().stream()
             .map(this::toResponse)
             .toList();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/pedido/{id}")
     public PedidoResponseDTO buscarPorId(@PathVariable Long id) {
         return toResponse(pedidoService.buscarPorId(id));
     }
 
-    @PostMapping
+    @PostMapping("/pedido")
     @ResponseStatus(HttpStatus.CREATED)
     public PedidoResponseDTO criar(@Valid @RequestBody PedidoRequestDTO dto) {
         Pedido pedido = pedidoService.criar(dto);

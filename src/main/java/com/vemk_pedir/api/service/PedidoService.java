@@ -5,6 +5,9 @@ import com.vemk_pedir.api.dto.PedidoRequestDTO;
 import com.vemk_pedir.api.model.ItemPedido;
 import com.vemk_pedir.api.model.Pedido;
 import com.vemk_pedir.api.repository.PedidoRepository;
+import com.vemk_pedir.api.service.IAParsingService.ParsedItem;
+import com.vemk_pedir.api.service.IAParsingService.ParsedPedido;
+import com.vemk_pedir.api.service.ParserFacadeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -15,22 +18,40 @@ import java.util.List;
 public class PedidoService {
 
     private final PedidoRepository pedidoRepository;
+    private final ParserFacadeService parserFacadeService;
 
-    public PedidoService(PedidoRepository pedidoRepository) {
+    public PedidoService(PedidoRepository pedidoRepository, ParserFacadeService parserFacadeService) {
         this.pedidoRepository = pedidoRepository;
+        this.parserFacadeService = parserFacadeService;
     }
 
     public Pedido criar(PedidoRequestDTO dto) {
         Pedido pedido = new Pedido();
         pedido.setTextoOriginal(dto.textoOriginal());
-        pedido.setCliente(dto.cliente());
-        pedido.setDataEntrega(dto.dataEntrega());
+        pedido.setCliente(dto.cliente() != null && !dto.cliente().isBlank() ? dto.cliente() : "desconhecido");
 
-        for (PedidoItemRequestDTO itemDto : dto.itens()) {
-            ItemPedido item = new ItemPedido();
-            item.setProduto(itemDto.produto());
-            item.setQuantidade(itemDto.quantidade());
-            pedido.addItem(item);
+        ParsedPedido parsedPedido = parserFacadeService.parse(dto.textoOriginal());
+        pedido.setDataEntrega(dto.dataEntrega() != null ? dto.dataEntrega() : parsedPedido.dataEntrega());
+
+        List<PedidoItemRequestDTO> itensInformados = dto.itens();
+        if (itensInformados == null || itensInformados.isEmpty()) {
+            for (ParsedItem parsedItem : parsedPedido.itens()) {
+                ItemPedido item = new ItemPedido();
+                item.setProduto(parsedItem.produto());
+                item.setQuantidade(parsedItem.quantidade());
+                pedido.addItem(item);
+            }
+        } else {
+            for (PedidoItemRequestDTO itemDto : itensInformados) {
+                ItemPedido item = new ItemPedido();
+                item.setProduto(itemDto.produto());
+                item.setQuantidade(itemDto.quantidade());
+                pedido.addItem(item);
+            }
+        }
+
+        if (pedido.getItens().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nao foi possivel extrair itens do pedido");
         }
 
         return pedidoRepository.save(pedido);
