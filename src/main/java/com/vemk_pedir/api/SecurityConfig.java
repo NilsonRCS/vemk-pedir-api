@@ -16,10 +16,10 @@ public class SecurityConfig {
 			.authorizeHttpRequests(authorize -> authorize
 				.requestMatchers(PathRequest.toH2Console()).permitAll()
 				.anyRequest().authenticated())
-			.csrf(csrf -> csrf.ignoringRequestMatchers(PathRequest.toH2Console()))
+			.csrf(csrf -> csrf.disable())
 			.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()))
 			.httpBasic(Customizer.withDefaults())
-			.formLogin(Customizer.withDefaults());
+			.formLogin(form -> form.disable());
 
 		return http.build();
 	}
