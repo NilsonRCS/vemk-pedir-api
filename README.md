@@ -74,4 +74,12 @@ Aqui eu inicio o entendimento dos requisitos, com o uso da IA(sonnet 4.6) crio u
    Testes de controller.
    Pequena documentação de uso.
    Critério de pronto: execução estável e previsível.
-   
+
+
+Observações:
+
+Um ponto comum é que, ao pedir alguma criação ou edição e afins, a IA acaba não fazendo coisas básicas como ENVs ou configurações; por isso, é sempre indicado checar tudo antes do push para o git.
+
+Outro ponto foi o desenvolvimento de um parsing bem simples, usando regex para editar os dados; com isso, no meu entendimento, fugiu do que eu gostaria, que é o uso de LLMs, para que tenha sentido no teste. Optei por usar o parsing simples de fallback, deixando apenas quando falha.
+
+Perda de contexto: outras vezes a IA perdia o contexto e refazia pontos que já tinha evoluído ao fazer o review notava esses erros, que são comuns. Eu corrigi e optei por ter uma pasta de contextos, nada complexo, apenas uma pasta com alguns .md que deixo no gitignore para não "sujar" o projeto.
