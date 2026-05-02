@@ -88,6 +88,11 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+					<environmentVariables>
+						<APP_SECURITY_USER>${env.APP_SECURITY_USER}</APP_SECURITY_USER>
+						<APP_SECURITY_PASSWORD>${env.APP_SECURITY_PASSWORD}</APP_SECURITY_PASSWORD>
+						<GEMINI_API_KEY>${env.GEMINI_API_KEY}</GEMINI_API_KEY>
+					</environmentVariables>
 				</configuration>
 			</plugin>
 			<plugin>

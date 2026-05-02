@@ -25,7 +25,7 @@ public class GeminiParsingService {
     private static final String GEMINI_URL =
         "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=";
     private static final int MAX_ATTEMPTS = 3;
-    private static final long INITIAL_BACKOFF_MS = 400;
+    private static final long INITIAL_BACKOFF_MS = 15_000;
 
     private static final String PROMPT_TEMPLATE = """
         Extraia do texto de pedido abaixo os itens e a data de entrega.
