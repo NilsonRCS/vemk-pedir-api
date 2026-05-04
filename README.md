@@ -1,5 +1,5 @@
 # vemk-pedir-api
-api in Java 17, spring boot 3.x
+Api in Java 17, spring boot 3.x
 
 Esse é um projeto para demonstrar minhas decisões ao desenvolver em Java/React.
 
@@ -76,7 +76,7 @@ Aqui eu inicio o entendimento dos requisitos, com o uso da IA(sonnet 4.6) crio u
    Critério de pronto: execução estável e previsível.
 
 
-Observações:
+## Observações:
 
 Um ponto comum é que, ao pedir alguma criação ou edição e afins, a IA acaba não fazendo coisas básicas como ENVs ou configurações; por isso, é sempre indicado checar tudo antes do push para o git.
 
@@ -85,6 +85,53 @@ Outro ponto foi o desenvolvimento de um parsing bem simples, usando regex para e
 Perda de contexto: outras vezes a IA perdia o contexto e refazia pontos que já tinha evoluído ao fazer o review notava esses erros, que são comuns. Eu corrigi e optei por ter uma pasta de contextos, nada complexo, apenas uma pasta com alguns .md que deixo no gitignore para não "sujar" o projeto.
 
 ---
+
+## Fluxo de uso de ia:
+
+Nesse projeto, usei GPT para algumas dúvidas básicas.
+
+  exp: Preciso construir um projeto que usarei Java 17, spring 3x, e quero estudar as arquiteturas simples mais usadas, MVC com poucas camadas.
+
+a partir dessa, fui conferindo as melhores opções até chegar em uma que gostei.
+
+
+
+Para o desenvolvimento, utilizei GitHub Copilot (pois já tinha e uso geralmente); Sonnet 4.6 foi o que mais usei.
+
+Comecei a desenvolver com prompts mais simples como: 
+
+Preciso construir um controller para processar pedidos, desenvolva usando a arquitetura que existe no projeto. 
+
+realmente era criado, mas acabava ignorando algumas camas, adicionando regra de negócio no controller, criou o parsing dentro do controler e afins.
+
+Depois comecei a melhorar os textos:
+
+exp: Gere um controller REST seguindo arquitetura em camadas, o controller deve apenas receber a requisição, delegar para um service e retornar ResponseEntity.
+Não inclua lógica de negócio no controller.”
+
+Isso acabo melhorando o desenvolvimento.
+
+
+
+
+
+Para o frontend, foi usado o mesmo Copilot em maior parte Sonnet 4.6. Decidi dividir o projeto em 2 repositórios, back e front, é um uso comum meu. Acredito que poderia ter sido um monolito, mas, por padrão, acabei separando.
+
+Construi manualmente a base para deixar as pastas como eu queria. Depois comecei a usar a IA no desenvolvimento, como foi uma page muito simples, pedi, dando a IA uma ideia do que queria:
+
+ exp: essa pagina precisa de um Header que ocupe 25% de altura do espaço disponível. Preciso que seja responsivo e use as cores que já existem no arquivo index.css.
+
+ exp: o header não está responsivo o suficiente em telas 1920×1080, vamos usar o 25vh.
+
+e por assim em diante fui conferindo os itens construídos e alinhando para o que eu queria visualmente.
+
+
+
+utilizei o gemini para o parsing, também deixei um fallback em regex que inicialmente foi feito de forma errada, mas acabei vendo valor em usalo de fallback.
+
+Uso ia como um pair programing, onde confiro e corrijo, aprendo e tiro duvidas. não deixo as deciçoes pela IA.
+
+
 
 ## Como rodar o projeto
 
