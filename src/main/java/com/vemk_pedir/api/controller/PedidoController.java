@@ -1,9 +1,7 @@
 package com.vemk_pedir.api.controller;
 
-import com.vemk_pedir.api.dto.PedidoItemResponseDTO;
 import com.vemk_pedir.api.dto.PedidoRequestDTO;
 import com.vemk_pedir.api.dto.PedidoResponseDTO;
-import com.vemk_pedir.api.model.Pedido;
 import com.vemk_pedir.api.service.PedidoService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -28,35 +26,17 @@ public class PedidoController {
 
     @GetMapping("/pedidos")
     public List<PedidoResponseDTO> listar() {
-        return pedidoService.listarTodos().stream()
-            .map(this::toResponse)
-            .toList();
+        return pedidoService.listarTodos();
     }
 
     @GetMapping("/pedido/{id}")
     public PedidoResponseDTO buscarPorId(@PathVariable Long id) {
-        return toResponse(pedidoService.buscarPorId(id));
+        return pedidoService.buscarPorId(id);
     }
 
     @PostMapping("/pedido")
     @ResponseStatus(HttpStatus.CREATED)
     public PedidoResponseDTO criar(@Valid @RequestBody PedidoRequestDTO dto) {
-        Pedido pedido = pedidoService.criar(dto);
-        return toResponse(pedido);
-    }
-
-    private PedidoResponseDTO toResponse(Pedido pedido) {
-        List<PedidoItemResponseDTO> itens = pedido.getItens().stream()
-            .map(item -> new PedidoItemResponseDTO(item.getProduto(), item.getQuantidade()))
-            .toList();
-
-        return new PedidoResponseDTO(
-            pedido.getId(),
-            pedido.getTextoOriginal(),
-            pedido.getCliente(),
-            pedido.getDataEntrega(),
-            itens,
-            pedido.getCreatedAt()
-        );
+        return pedidoService.criar(dto);
     }
 }

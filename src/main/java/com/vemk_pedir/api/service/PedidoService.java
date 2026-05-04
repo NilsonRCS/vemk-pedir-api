@@ -1,13 +1,14 @@
 package com.vemk_pedir.api.service;
 
 import com.vemk_pedir.api.dto.PedidoItemRequestDTO;
+import com.vemk_pedir.api.dto.PedidoItemResponseDTO;
 import com.vemk_pedir.api.dto.PedidoRequestDTO;
+import com.vemk_pedir.api.dto.PedidoResponseDTO;
 import com.vemk_pedir.api.model.ItemPedido;
 import com.vemk_pedir.api.model.Pedido;
 import com.vemk_pedir.api.repository.PedidoRepository;
 import com.vemk_pedir.api.service.IAParsingService.ParsedItem;
 import com.vemk_pedir.api.service.IAParsingService.ParsedPedido;
-import com.vemk_pedir.api.service.ParserFacadeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -25,7 +26,7 @@ public class PedidoService {
         this.parserFacadeService = parserFacadeService;
     }
 
-    public Pedido criar(PedidoRequestDTO dto) {
+    public PedidoResponseDTO criar(PedidoRequestDTO dto) {
         Pedido pedido = new Pedido();
         pedido.setTextoOriginal(dto.textoOriginal());
         pedido.setCliente(dto.cliente() != null && !dto.cliente().isBlank() ? dto.cliente() : "desconhecido");
@@ -54,15 +55,32 @@ public class PedidoService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nao foi possivel extrair itens do pedido");
         }
 
-        return pedidoRepository.save(pedido);
+        return toResponse(pedidoRepository.save(pedido));
     }
 
-    public List<Pedido> listarTodos() {
-        return pedidoRepository.findAll();
+    public List<PedidoResponseDTO> listarTodos() {
+        return pedidoRepository.findAll().stream()
+            .map(this::toResponse)
+            .toList();
     }
 
-    public Pedido buscarPorId(Long id) {
-        return pedidoRepository.findById(id)
+    public PedidoResponseDTO buscarPorId(Long id) {
+        Pedido pedido = pedidoRepository.findById(id)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pedido nao encontrado"));
+        return toResponse(pedido);
+    }
+
+    private PedidoResponseDTO toResponse(Pedido pedido) {
+        List<PedidoItemResponseDTO> itens = pedido.getItens().stream()
+            .map(item -> new PedidoItemResponseDTO(item.getProduto(), item.getQuantidade()))
+            .toList();
+        return new PedidoResponseDTO(
+            pedido.getId(),
+            pedido.getTextoOriginal(),
+            pedido.getCliente(),
+            pedido.getDataEntrega(),
+            itens,
+            pedido.getCreatedAt()
+        );
     }
 }
